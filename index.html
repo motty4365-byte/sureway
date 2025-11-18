@@ -4,401 +4,307 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sureway Insurance - Commercial Insurance Brokerage</title>
+
     <style>
-            * {
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-            }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-            <script>
-      document.getElementById("contactForm").addEventListener("submit", async function(event) {
-          event.preventDefault(); // stop normal redirect
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      }
 
-          const form = event.target;
+      /* Navigation */
+      nav {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: rgba(56, 114, 162, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        padding: 1rem 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
 
-          // Send data to Formspree
-          const response = await fetch("https://formspree.io/f/mrbjgzqk", {
-              method: "POST",
-              body: new FormData(form),
-              headers: { "Accept": "application/json" }
-          });
+      nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 2rem;
+      }
 
-          if (response.ok) {
-              // Show popup
-              const popup = document.getElementById("successPopup");
-              popup.style.display = "block";
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+      }
 
-              // Hide after 5 seconds
-              setTimeout(() => {
-                  popup.style.display = "none";
-              }, 5000);
+      nav a:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
 
-              // Clear form
-              form.reset();
-          } else {
-              alert("Error sending message. Please try again.");
-          }
-      });
-      </script>
+      /* Sections */
+      section {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 6rem 2rem 2rem;
+        scroll-snap-align: start;
+      }
 
+      /* Home Section */
+      #home {
+        background: linear-gradient(
+            rgba(56, 114, 162, 0.7),
+            rgba(42, 90, 130, 0.7)
+          ),
+          url("https://drive.google.com/uc?export=view&id=1_P4i-sohY-prPVXWYGU1UOch46dwCb3T");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
 
-            body {
-              font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-              overflow-x: hidden;
-              scroll-behavior: smooth;
-            }
+      .logo {
+        font-size: 4rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        position: relative;
+        z-index: 1;
+      }
 
-            /* Navigation */
-            nav {
-              position: fixed;
-              top: 0;
-              width: 100%;
-              background: rgba(56, 114, 162, 0.95);
-              backdrop-filter: blur(10px);
-              z-index: 1000;
-              padding: 1rem 0;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            }
+      .logo-subtitle {
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+      }
 
-            nav ul {
-              list-style: none;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              flex-wrap: wrap;
-              gap: 2rem;
-            }
+      .tagline {
+        font-size: 1.8rem;
+        margin: 2rem 0;
+        font-style: italic;
+        max-width: 800px;
+        line-height: 1.6;
+        position: relative;
+        z-index: 1;
+      }
 
-            nav a {
-              color: white;
-              text-decoration: none;
-              font-weight: 600;
-              font-size: 1.1rem;
-              transition: all 0.3s;
-              padding: 0.5rem 1rem;
-              border-radius: 5px;
-            }
+      .experience {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-top: 2rem;
+        padding: 1rem 2rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        position: relative;
+        z-index: 1;
+      }
 
-            nav a:hover {
-              background: rgba(255, 255, 255, 0.2);
-              transform: translateY(-2px);
-            }
+      /* Services Section */
+      #services {
+        background: #f5f5f5;
+      }
 
-            /* Sections */
-            section {
-              min-height: 100vh;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
-              padding: 6rem 2rem 2rem;
-              scroll-snap-align: start;
-            }
+      .section-title {
+        font-size: 3rem;
+        color: #3872a2;
+        margin-bottom: 3rem;
+        text-align: center;
+      }
 
-            /* Home Section */
-            #home {
-              background: linear-gradient(
-                  rgba(56, 114, 162, 0.7),
-                  rgba(42, 90, 130, 0.7)
-                ),
-                url("https://drive.google.com/uc?export=view&id=1_P4i-sohY-prPVXWYGU1UOch46dwCb3T");
-              background-size: cover;
-              background-position: center;
-              background-attachment: fixed;
-              color: white;
-              text-align: center;
-              position: relative;
-              overflow: hidden;
-            }
+      .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        width: 100%;
+      }
 
-            #home::before {
-              content: "";
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><path d="M0,300 Q300,200 600,300 T1200,300 L1200,600 L0,600 Z" fill="rgba(255,255,255,0.05)"/></svg>')
-                no-repeat bottom;
-              background-size: cover;
-              opacity: 0.3;
-            }
+      .service-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+        text-align: center;
+      }
 
-            .logo {
-              font-size: 4rem;
-              font-weight: bold;
-              margin-bottom: 1rem;
-              text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-              position: relative;
-              z-index: 1;
-            }
+      .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(56, 114, 162, 0.2);
+      }
 
-            .logo-subtitle {
-              font-size: 1.5rem;
-              font-weight: 300;
-              margin-bottom: 2rem;
-              position: relative;
-              z-index: 1;
-            }
+      .service-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #3872a2;
+      }
 
-            .tagline {
-              font-size: 1.8rem;
-              margin: 2rem 0;
-              font-style: italic;
-              max-width: 800px;
-              line-height: 1.6;
-              position: relative;
-              z-index: 1;
-            }
+      /* About Section */
+      #about {
+        background: linear-gradient(135deg, #3872a2 0%, #2a5a82 100%);
+        color: white;
+      }
 
-            .experience {
-              font-size: 2.5rem;
-              font-weight: bold;
-              margin-top: 2rem;
-              padding: 1rem 2rem;
-              background: rgba(255, 255, 255, 0.1);
-              border-radius: 10px;
-              position: relative;
-              z-index: 1;
-            }
+      .about-content {
+        max-width: 900px;
+        text-align: center;
+      }
 
-            /* Services Section */
-            #services {
-              background: #f5f5f5;
-            }
+      .about-content p {
+        font-size: 1.3rem;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+      }
 
-            .section-title {
-              font-size: 3rem;
-              color: #3872a2;
-              margin-bottom: 3rem;
-              text-align: center;
-            }
+      /* Team Section */
+      #team {
+        background: #f5f5f5;
+      }
 
-            .services-grid {
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-              gap: 2rem;
-              max-width: 1200px;
-              width: 100%;
-            }
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        width: 100%;
+      }
 
-            .service-card {
-              background: white;
-              padding: 2rem;
-              border-radius: 15px;
-              box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-              transition: transform 0.3s;
-              text-align: center;
-            }
+      .team-member {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s;
+      }
 
-            .service-card:hover {
-              transform: translateY(-10px);
-              box-shadow: 0 10px 25px rgba(56, 114, 162, 0.2);
-            }
+      .team-member:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(56, 114, 162, 0.2);
+      }
 
-            .service-icon {
-              font-size: 3rem;
-              margin-bottom: 1rem;
-              color: #3872a2;
-            }
+      /* Contact Section */
+      #contact {
+        background: white;
+      }
 
-            .service-card h3 {
-              font-size: 1.5rem;
-              color: #3872a2;
-              margin-bottom: 1rem;
-            }
+      .contact-info {
+        max-width: 800px;
+        width: 100%;
+        background: #f5f5f5;
+        padding: 3rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
 
-            /* About Section */
-            #about {
-              background: linear-gradient(135deg, #3872a2 0%, #2a5a82 100%);
-              color: white;
-            }
+      /* Quote Section */
+      #quote {
+        background: linear-gradient(135deg, #3872a2 0%, #2a5a82 100%);
+        color: white;
+      }
 
-            .about-content {
-              max-width: 900px;
-              text-align: center;
-            }
+      .quote-form {
+        max-width: 600px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 3rem;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+      }
 
-            .about-content p {
-              font-size: 1.3rem;
-              line-height: 1.8;
-              margin-bottom: 1.5rem;
-            }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
 
-            /* Team Section */
-            #team {
-              background: #f5f5f5;
-            }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
 
-            .team-grid {
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-              gap: 2rem;
-              max-width: 1200px;
-              width: 100%;
-            }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+      }
 
-            .team-member {
-              background: white;
-              padding: 2rem;
-              border-radius: 15px;
-              box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-              text-align: center;
-              transition: transform 0.3s;
-            }
+      .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
 
-            .team-member:hover {
-              transform: translateY(-10px);
-              box-shadow: 0 10px 25px rgba(56, 114, 162, 0.2);
-            }
+      .submit-btn {
+        width: 100%;
+        padding: 1rem 2rem;
+        background: white;
+        color: #3872a2;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
 
-            .team-avatar {
-              width: 120px;
-              height: 120px;
-              background: #3872a2;
-              border-radius: 50%;
-              margin: 0 auto 1rem;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 3rem;
-              color: white;
-              font-weight: bold;
-            }
+      .submit-btn:hover {
+        background: #f0f0f0;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
 
-            .team-member h3 {
-              font-size: 1.5rem;
-              color: #3872a2;
-              margin-bottom: 0.5rem;
-            }
+      @media (max-width: 768px) {
+        .logo {
+          font-size: 2.5rem;
+        }
 
-            .team-member p {
-              color: #666;
-              font-size: 1.1rem;
-            }
+        .tagline {
+          font-size: 1.3rem;
+        }
 
-            /* Contact Section */
-            #contact {
-              background: white;
-            }
+        .section-title {
+          font-size: 2rem;
+        }
 
-            .contact-info {
-              max-width: 800px;
-              width: 100%;
-              background: #f5f5f5;
-              padding: 3rem;
-              border-radius: 15px;
-              box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
+        nav ul {
+          gap: 1rem;
+        }
 
-            .contact-item {
-              margin-bottom: 2rem;
-              font-size: 1.3rem;
-            }
-
-            .contact-item strong {
-              color: #3872a2;
-              display: block;
-              margin-bottom: 0.5rem;
-              font-size: 1.5rem;
-            }
-
-            .contact-item a {
-              color: #3872a2;
-              text-decoration: none;
-            }
-
-            .contact-item a:hover {
-              text-decoration: underline;
-            }
-
-            /* Quote Section */
-            #quote {
-              background: linear-gradient(135deg, #3872a2 0%, #2a5a82 100%);
-              color: white;
-            }
-
-            .quote-form {
-              max-width: 600px;
-              width: 100%;
-              background: rgba(255, 255, 255, 0.1);
-              padding: 3rem;
-              border-radius: 15px;
-              backdrop-filter: blur(10px);
-            }
-
-            .form-group {
-              margin-bottom: 1.5rem;
-            }
-
-            .form-group label {
-              display: block;
-              margin-bottom: 0.5rem;
-              font-size: 1.1rem;
-              font-weight: 600;
-            }
-
-            .form-group input,
-            .form-group select,
-            .form-group textarea {
-              width: 100%;
-              padding: 1rem;
-              border: none;
-              border-radius: 8px;
-              font-size: 1rem;
-              background: rgba(255, 255, 255, 0.9);
-            }
-
-            .form-group textarea {
-              resize: vertical;
-              min-height: 120px;
-            }
-
-            .submit-btn {
-              width: 100%;
-              padding: 1rem 2rem;
-              background: white;
-              color: #3872a2;
-              border: none;
-              border-radius: 8px;
-              font-size: 1.2rem;
-              font-weight: bold;
-              cursor: pointer;
-              transition: all 0.3s;
-            }
-
-            .submit-btn:hover {
-              background: #f0f0f0;
-              transform: translateY(-2px);
-              box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            }
-
-            @media (max-width: 768px) {
-              .logo {
-                font-size: 2.5rem;
-              }
-
-              .tagline {
-                font-size: 1.3rem;
-              }
-
-              .section-title {
-                font-size: 2rem;
-              }
-
-              nav ul {
-                gap: 1rem;
-              }
-
-              nav a {
-                font-size: 0.9rem;
-                padding: 0.3rem 0.6rem;
-              }
-            }
+        nav a {
+          font-size: 0.9rem;
+          padding: 0.3rem 0.6rem;
+        }
+      }
     </style>
   </head>
+
   <body>
+    <!-- Popup -->
     <div
       id="successPopup"
       style="
@@ -552,23 +458,34 @@
 
     <section id="quote">
       <h2 class="section-title">Get a Quote</h2>
-      <form class="quote-form" <form id="contactForm">
+
+      <!-- FIXED FORM TAG -->
+      <form
+        class="quote-form"
+        id="contactForm"
+        action="https://formspree.io/f/mrbjgzqk"
+        method="POST"
+      >
         <div class="form-group">
           <label for="name">Full Name *</label>
           <input type="text" id="name" name="name" required />
         </div>
+
         <div class="form-group">
           <label for="company">Company Name *</label>
           <input type="text" id="company" name="company" required />
         </div>
+
         <div class="form-group">
           <label for="email">Email *</label>
           <input type="email" id="email" name="email" required />
         </div>
+
         <div class="form-group">
           <label for="phone">Phone *</label>
           <input type="tel" id="phone" name="phone" required />
         </div>
+
         <div class="form-group">
           <label for="service">Service Interested In *</label>
           <select id="service" name="service" required>
@@ -580,6 +497,7 @@
             <option value="multiple">Multiple Services</option>
           </select>
         </div>
+
         <div class="form-group">
           <label for="message">Additional Information</label>
           <textarea
@@ -588,12 +506,43 @@
             placeholder="Tell us about your business and insurance needs..."
           ></textarea>
         </div>
+
         <button type="submit" class="submit-btn">Request Quote</button>
       </form>
     </section>
 
+    <!-- POPUP FORM SCRIPT -->
     <script>
-      // Smooth scroll enhancement
+      document
+        .getElementById("contactForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const form = event.target;
+
+          const response = await fetch("https://formspree.io/f/mrbjgzqk", {
+            method: "POST",
+            body: new FormData(form),
+            headers: { Accept: "application/json" },
+          });
+
+          if (response.ok) {
+            const popup = document.getElementById("successPopup");
+            popup.style.display = "block";
+
+            setTimeout(() => {
+              popup.style.display = "none";
+            }, 5000);
+
+            form.reset();
+          } else {
+            alert("Error sending message. Please try again.");
+          }
+        });
+    </script>
+
+    <!-- Smooth Scroll -->
+    <script>
       document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         anchor.addEventListener("click", function (e) {
           e.preventDefault();
