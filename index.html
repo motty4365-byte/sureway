@@ -1407,285 +1407,317 @@
         });
         
         // ============================================
-        // AI ANALYSIS SECTION - FIXED VERSION
-        // ============================================
+// ============================================
+// AI ANALYSIS SECTION - VERCEL + OPENAI VERSION
+// ============================================
+
+// Automatically use the current domain for API calls
+const SERVER_URL = window.location.origin;
+const CLIENT_API_KEY = 'suRew@y_Insur@nce_2024_S3cur3_K3y';
+
+console.log('AI Analysis initialized. API endpoint:', `${SERVER_URL}/api/analyze-policy`);
+console.log('Using OpenAI GPT-4o for analysis');
+
+// Real API function that connects to Vercel serverless function
+window.analyzePolicyWithAPI = async function(policyFile) {
+    const formData = new FormData();
+    formData.append('policy_file', policyFile);
+    
+    try {
+        console.log('Sending file to AI analysis:', policyFile.name);
+        console.log('API Endpoint:', `${SERVER_URL}/api/analyze-policy`);
         
-        // Your server URL - UPDATE THIS with your actual server URL
-        const SERVER_URL = 'http://localhost:3000'; // Change to your server URL
-        const CLIENT_API_KEY = 'suRew@y_Insur@nce_2024_S3cur3_K3y'; // Must match .env file
+        const response = await fetch(`${SERVER_URL}/api/analyze-policy`, {
+            method: 'POST',
+            headers: {
+                'X-API-Key': CLIENT_API_KEY
+            },
+            body: formData
+        });
         
-        // Real API function that connects to your Node.js server
-        window.analyzePolicyWithAPI = async function(policyFile) {
-            const formData = new FormData();
-            formData.append('policy_file', policyFile);
+        const responseText = await response.text();
+        console.log('Server response status:', response.status);
+        
+        if (!response.ok) {
+            console.error('Server error response:', responseText);
+            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = JSON.parse(responseText);
+        
+        if (!data.success) {
+            throw new Error(data.error || 'Analysis failed');
+        }
+        
+        console.log('AI analysis successful:', data.analysis_id);
+        console.log('Model used:', data.metadata?.model_used);
+        return data;
+        
+    } catch (error) {
+        console.error('Error in API call:', error);
+        throw error; // Re-throw to be handled by caller
+    }
+};
+
+// Function to display AI results
+function displayAIResults(apiResult) {
+    const data = apiResult.data;
+    const aiResults = document.getElementById('aiResults');
+    
+    // Format savings potential
+    const savingsPotential = data.executive_summary?.savings_potential || 
+                            data.savings_opportunities?.estimated_savings_range || 
+                            '15-25%';
+    
+    // Get premium info
+    const currentPremium = data.executive_summary?.current_premium || 'Analysis completed';
+    
+    // Get confidence score
+    const confidence = data.executive_summary?.confidence_score || 85;
+    
+    // Get immediate actions
+    const actions = data.savings_opportunities?.immediate_actions || 
+                   data.priority_recommendations || 
+                   [
+                       'Review classification codes for accuracy',
+                       'Verify payroll calculations',
+                       'Check experience modification factor'
+                   ];
+    
+    // Get model info
+    const modelUsed = apiResult.metadata?.model_used || 'GPT-4o';
+    
+    aiResults.innerHTML = `
+        <h4><i class="fas fa-robot"></i> AI Analysis Results</h4>
+        <div class="result-id">Analysis ID: ${apiResult.analysis_id} | Model: ${modelUsed}</div>
+        
+        <div class="result-item">
+            <div class="result-label">Policy Status</div>
+            <div class="result-value">${currentPremium}</div>
+        </div>
+        
+        <div class="result-item">
+            <div class="result-label">Savings Potential</div>
+            <div class="result-value">${savingsPotential}</div>
+            <div class="savings-badge">AI-IDENTIFIED SAVINGS</div>
+        </div>
+        
+        <div class="result-item">
+            <div class="result-label">Analysis Confidence</div>
+            <div class="result-value">${confidence}%</div>
+        </div>
+        
+        <div class="result-item">
+            <div class="result-label">Recommended Actions</div>
+            <div class="result-value">
+                <ul style="margin-left: 20px; margin-top: 10px; text-align: left;">
+                    ${actions.slice(0, 5).map(action => 
+                        `<li style="margin-bottom: 8px;">${action}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        </div>
+        
+        ${data.executive_summary?.overall_assessment ? `
+        <div class="result-item">
+            <div class="result-label">Overall Assessment</div>
+            <div class="result-value" style="font-size: 0.95rem; line-height: 1.6;">
+                ${data.executive_summary.overall_assessment}
+            </div>
+        </div>
+        ` : ''}
+        
+        ${data.coverage_analysis?.compliance_status ? `
+        <div class="result-item">
+            <div class="result-label">NY State Compliance</div>
+            <div class="result-value">${data.coverage_analysis.compliance_status}</div>
+        </div>
+        ` : ''}
+        
+        <div class="result-actions">
+            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="window.location.href='tel:8453791888'">
+                <i class="fas fa-phone-alt"></i> Schedule Free Consultation
+            </button>
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="downloadAnalysisReport()">
+                <i class="fas fa-download"></i> Download Full Report
+            </button>
+        </div>
+    `;
+    
+    aiResults.style.display = 'block';
+}
+
+// Function to download report
+function downloadAnalysisReport() {
+    alert('Contact us at (845) 379-1888 to receive your detailed analysis report via email.');
+    // In production: This could generate and download a PDF report
+}
+
+// Initialize AI analysis functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('policyUpload');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    
+    // Click upload area to trigger file input
+    uploadArea.addEventListener('click', function() {
+        fileInput.click();
+    });
+    
+    // File input change handler
+    fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const fileName = file.name;
+            const fileSize = (file.size / (1024*1024)).toFixed(2); // MB
             
-            try {
-                console.log('Sending file to AI analysis server:', policyFile.name);
-                
-                const response = await fetch(`${SERVER_URL}/api/analyze-policy`, {
-                    method: 'POST',
-                    headers: {
-                        'X-API-Key': CLIENT_API_KEY
-                        // Don't set Content-Type - let browser set it for FormData
-                    },
-                    body: formData
-                });
-                
-                const responseText = await response.text();
-                
-                if (!response.ok) {
-                    console.error('Server error response:', responseText);
-                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                }
-                
-                const data = JSON.parse(responseText);
-                
-                if (!data.success) {
-                    throw new Error(data.error || 'Analysis failed');
-                }
-                
-                console.log('AI analysis successful:', data.analysis_id);
-                return data;
-                
-            } catch (error) {
-                console.error('Error in API call:', error);
-                
-                // Fallback to simulated analysis if server is down
-                console.log('Falling back to simulated analysis');
-                return {
-                    success: true,
-                    analysis_id: `fallback_${Date.now()}`,
-                    data: {
-                        executive_summary: {
-                            current_premium: "$24,850",
-                            overall_assessment: "Analysis completed with basic review",
-                            savings_potential: "15-25%",
-                            confidence_score: 75
-                        },
-                        savings_opportunities: {
-                            immediate_actions: [
-                                "Review classification codes for accuracy",
-                                "Verify payroll calculations",
-                                "Check experience modification factor"
-                            ],
-                            estimated_savings_range: "15-25%"
-                        },
-                        metadata: {
-                            note: "Using fallback analysis - server may be offline"
-                        }
-                    }
-                };
+            // Check file size
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File size must be under 10MB. Please upload a smaller file.');
+                fileInput.value = '';
+                return;
             }
-        };
-        
-        // Function to display AI results
-        function displayAIResults(apiResult) {
-            const data = apiResult.data;
-            const aiResults = document.getElementById('aiResults');
             
-            aiResults.innerHTML = `
-                <h4><i class="fas fa-robot"></i> AI Analysis Results</h4>
-                <div class="result-id">Analysis ID: ${apiResult.analysis_id}</div>
-                
-                <div class="result-item">
-                    <div class="result-label">Current Premium</div>
-                    <div class="result-value">${data.executive_summary?.current_premium || 'Analysis completed'}</div>
-                </div>
-                
-                <div class="result-item">
-                    <div class="result-label">Savings Potential</div>
-                    <div class="result-value">${data.executive_summary?.savings_potential || '15-25%'}</div>
-                    <div class="savings-badge">AI-IDENTIFIED SAVINGS</div>
-                </div>
-                
-                <div class="result-item">
-                    <div class="result-label">Confidence Score</div>
-                    <div class="result-value">${data.executive_summary?.confidence_score || '85'}%</div>
-                </div>
-                
-                ${data.savings_opportunities?.immediate_actions ? `
-                <div class="result-item">
-                    <div class="result-label">Recommended Actions</div>
-                    <div class="result-value">
-                        <ul style="margin-left: 20px; margin-top: 10px;">
-                            ${data.savings_opportunities.immediate_actions.slice(0, 3).map(action => 
-                                `<li>${action}</li>`
-                            ).join('')}
-                        </ul>
-                    </div>
-                </div>
-                ` : ''}
-                
-                <div class="result-actions">
-                    <button class="btn" style="width: 100%; margin-top: 20px;">
-                        <i class="fas fa-phone-alt"></i> Schedule Free Consultation
-                    </button>
-                    <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="downloadAnalysisReport()">
-                        <i class="fas fa-download"></i> Download Full Report
-                    </button>
-                </div>
+            // Check file type
+            const validTypes = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+            const fileExt = fileName.split('.').pop().toLowerCase();
+            if (!validTypes.includes(fileExt)) {
+                alert('Please upload a PDF, DOC, DOCX, JPG, JPEG, or PNG file.');
+                fileInput.value = '';
+                return;
+            }
+            
+            // Update upload area display
+            uploadArea.innerHTML = `
+                <i class="fas fa-file-contract" style="color: #4CAF50;"></i>
+                <p><strong>${fileName}</strong></p>
+                <p>${fileSize} MB - Ready for analysis</p>
+                <div class="file-types">Click "Analyze Policy" to continue</div>
             `;
             
+            // Enable analyze button
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Policy with AI';
+            
+            // Change upload area style
+            uploadArea.style.borderColor = '#4CAF50';
+            uploadArea.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
+        }
+    });
+    
+    // Drag and drop functionality
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'var(--primary)';
+        uploadArea.style.backgroundColor = 'rgba(26, 95, 158, 0.1)';
+    });
+    
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'var(--gray-light)';
+        uploadArea.style.backgroundColor = '';
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'var(--gray-light)';
+        uploadArea.style.backgroundColor = '';
+        
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            
+            // Trigger change event
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        }
+    });
+    
+    // Analyze button click handler
+    analyzeBtn.addEventListener('click', async function() {
+        if (analyzeBtn.disabled || !fileInput.files.length) return;
+        
+        const policyFile = fileInput.files[0];
+        
+        // Show loading state
+        analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing with OpenAI...';
+        analyzeBtn.disabled = true;
+        
+        // Show progress indicator
+        uploadArea.innerHTML = `
+            <i class="fas fa-spinner fa-spin" style="font-size: 2.5rem; color: var(--primary);"></i>
+            <p><strong>AI Analysis in Progress</strong></p>
+            <p>Processing ${policyFile.name}</p>
+            <div class="file-types">Using OpenAI GPT-4o... This may take 15-30 seconds</div>
+        `;
+        
+        try {
+            // Call API function
+            const analysisResult = await analyzePolicyWithAPI(policyFile);
+            
+            // Display results
+            displayAIResults(analysisResult);
+            
+            // Update button
+            analyzeBtn.innerHTML = '<i class="fas fa-check"></i> Analysis Complete';
+            analyzeBtn.style.backgroundColor = '#4CAF50';
+            
+            // Update upload area
+            uploadArea.innerHTML = `
+                <i class="fas fa-check-circle" style="color: #4CAF50; font-size: 2.5rem;"></i>
+                <p><strong>Analysis Complete!</strong></p>
+                <p>${policyFile.name}</p>
+                <div class="file-types">Savings potential identified: ${analysisResult.data?.executive_summary?.savings_potential || '15-25%'}</div>
+            `;
+            uploadArea.style.borderColor = '#4CAF50';
+            uploadArea.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+            
+            // Scroll to results
+            setTimeout(() => {
+                document.getElementById('aiResults').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'nearest' 
+                });
+            }, 300);
+            
+        } catch (error) {
+            // Handle errors
+            console.error('Analysis failed:', error);
+            
+            analyzeBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Try Again';
+            analyzeBtn.disabled = false;
+            analyzeBtn.style.backgroundColor = '';
+            
+            uploadArea.innerHTML = `
+                <i class="fas fa-exclamation-circle" style="color: #e74c3c; font-size: 2.5rem;"></i>
+                <p><strong>Analysis Failed</strong></p>
+                <p>${error.message || 'Please try again or contact support'}</p>
+                <div class="file-types">Click to upload a different file</div>
+            `;
+            uploadArea.style.borderColor = '#e74c3c';
+            uploadArea.style.backgroundColor = 'rgba(231, 76, 60, 0.05)';
+            
+            // Show error details in results
+            const aiResults = document.getElementById('aiResults');
+            aiResults.innerHTML = `
+                <h4><i class="fas fa-exclamation-triangle"></i> Analysis Error</h4>
+                <div class="result-item">
+                    <div class="result-label">Error Message</div>
+                    <div class="result-value">${error.message || 'Unable to complete analysis'}</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Need Help?</div>
+                    <div class="result-value">
+                        Please call us at <strong>(845) 379-1888</strong> and we'll assist you with your policy analysis.
+                    </div>
+                </div>
+                <button class="btn" onclick="location.reload()" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-redo"></i> Try Again
+                </button>
+            `;
             aiResults.style.display = 'block';
         }
-        
-        // Function to download report
-        function downloadAnalysisReport() {
-            alert('Full report download feature would be implemented with server integration');
-            // In production: Generate and download PDF report
-        }
-        
-        // Initialize AI analysis functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const uploadArea = document.getElementById('uploadArea');
-            const fileInput = document.getElementById('policyUpload');
-            const analyzeBtn = document.getElementById('analyzeBtn');
-            
-            // Click upload area to trigger file input
-            uploadArea.addEventListener('click', function() {
-                fileInput.click();
-            });
-            
-            // File input change handler
-            fileInput.addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    const file = e.target.files[0];
-                    const fileName = file.name;
-                    const fileSize = (file.size / (1024*1024)).toFixed(2); // MB
-                    
-                    // Update upload area display
-                    uploadArea.innerHTML = `
-                        <i class="fas fa-file-contract" style="color: #4CAF50;"></i>
-                        <p><strong>${fileName}</strong></p>
-                        <p>${fileSize} MB - Ready for analysis</p>
-                        <div class="file-types">Click "Analyze Policy" to continue</div>
-                    `;
-                    
-                    // Enable analyze button
-                    analyzeBtn.disabled = false;
-                    analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Policy with AI';
-                    
-                    // Change upload area style
-                    uploadArea.style.borderColor = '#4CAF50';
-                    uploadArea.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
-                }
-            });
-            
-            // Drag and drop functionality
-            uploadArea.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--primary)';
-                uploadArea.style.backgroundColor = 'rgba(26, 95, 158, 0.1)';
-            });
-            
-            uploadArea.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--gray-light)';
-                uploadArea.style.backgroundColor = '';
-            });
-            
-            uploadArea.addEventListener('drop', function(e) {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--gray-light)';
-                uploadArea.style.backgroundColor = '';
-                
-                if (e.dataTransfer.files.length > 0) {
-                    fileInput.files = e.dataTransfer.files;
-                    
-                    // Trigger change event
-                    const event = new Event('change');
-                    fileInput.dispatchEvent(event);
-                }
-            });
-            
-            // Real Analyze button click handler
-            analyzeBtn.addEventListener('click', async function() {
-                if (analyzeBtn.disabled || !fileInput.files.length) return;
-                
-                const policyFile = fileInput.files[0];
-                
-                // Show loading state
-                analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing with AI...';
-                analyzeBtn.disabled = true;
-                
-                // Show progress indicator
-                uploadArea.innerHTML = `
-                    <i class="fas fa-spinner fa-spin" style="font-size: 2.5rem;"></i>
-                    <p><strong>AI Analysis in Progress</strong></p>
-                    <p>Processing ${policyFile.name}</p>
-                    <div class="file-types">Using OpenAI GPT-4 for analysis...</div>
-                `;
-                
-                try {
-                    // Call REAL API function
-                    const analysisResult = await analyzePolicyWithAPI(policyFile);
-                    
-                    // Display results
-                    displayAIResults(analysisResult);
-                    
-                    // Update button
-                    analyzeBtn.innerHTML = '<i class="fas fa-check"></i> Analysis Complete';
-                    analyzeBtn.style.backgroundColor = '#4CAF50';
-                    
-                    // Update upload area
-                    uploadArea.innerHTML = `
-                        <i class="fas fa-check-circle" style="color: #4CAF50; font-size: 2.5rem;"></i>
-                        <p><strong>Analysis Complete!</strong></p>
-                        <p>${policyFile.name}</p>
-                        <div class="file-types">Savings potential identified: ${analysisResult.data?.executive_summary?.savings_potential || '15-25%'}</div>
-                    `;
-                    uploadArea.style.borderColor = '#4CAF50';
-                    uploadArea.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
-                    
-                    // Scroll to results
-                    document.getElementById('aiResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    
-                    // Add success testimonial
-                    if (!testimonials.some(t => t.name === "AI Analysis User")) {
-                        testimonials.push({
-                            text: "The AI analysis identified significant savings on our Workers' Comp policy. The process was simple and the results were delivered instantly. Highly recommend!",
-                            name: "AI Analysis User",
-                            role: "Business Owner",
-                            icon: "fa-robot"
-                        });
-                    }
-                    
-                } catch (error) {
-                    // Handle errors
-                    console.error('Analysis failed:', error);
-                    
-                    analyzeBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Try Again';
-                    analyzeBtn.disabled = false;
-                    
-                    uploadArea.innerHTML = `
-                        <i class="fas fa-exclamation-circle" style="color: #e74c3c; font-size: 2.5rem;"></i>
-                        <p><strong>Analysis Failed</strong></p>
-                        <p>${error.message || 'Please try again'}</p>
-                        <div class="file-types">Click to upload a different file</div>
-                    `;
-                    uploadArea.style.borderColor = '#e74c3c';
-                    uploadArea.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
-                    
-                    // Show error in results
-                    const aiResults = document.getElementById('aiResults');
-                    aiResults.innerHTML = `
-                        <h4><i class="fas fa-exclamation-triangle"></i> Analysis Error</h4>
-                        <div class="result-item">
-                            <div class="result-label">Error Message</div>
-                            <div class="result-value">${error.message || 'Unable to complete analysis'}</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Troubleshooting</div>
-                            <div class="result-value">Please try again with a different file or contact support</div>
-                        </div>
-                        <button class="btn" onclick="location.reload()" style="width: 100%; margin-top: 20px;">
-                            <i class="fas fa-redo"></i> Restart Analysis
-                        </button>
-                    `;
-                    aiResults.style.display = 'block';
-                }
-            });
-        });
+    });
+});
     </script>
 
 
